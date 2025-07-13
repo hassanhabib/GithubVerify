@@ -135,4 +135,4 @@ Then go to: [https://github.com/settings/ssh](https://github.com/settings/ssh)
 
 The Standard Software License
 Copyright © The Standard Organization  
-See [LICENSE](LICENSE) for full text.
+See [LICENSE](https://github.com/hassanhabib/GithubVerify/blob/master/LICENSE) for full text.

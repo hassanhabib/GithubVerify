@@ -30,6 +30,7 @@ public class GitSigningServiceTests
             broker.ExecuteGitCommandAsync(
                 "config --global --get commit.gpgsign"),
             Times.Once);
+
         processBrokerMock.Verify(broker =>
             broker.ExecuteGitCommandAsync(
                 "config --global --get gpg.format"),

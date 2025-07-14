@@ -4,16 +4,16 @@ using GitHubCommitVerifier.Services.GitSignings;
 
 namespace GitHubCommitVerifier.Services.Orchestrations.GitSignings;
 
-public class GitSigningOrchestrationService : IGitSigningOrchestrationService
+public class GitSigningCommandService : IGitSigningCommandService
 {
-    private readonly IGitSigningService gitSigningService;
+    private readonly IGitSigningOrchestrationService gitSigningOrchestrationService;
     private readonly ILoggingBroker loggingBroker;
 
-    public GitSigningOrchestrationService(
-        IGitSigningService gitSigningService,
+    public GitSigningCommandService(
+        IGitSigningOrchestrationService gitSigningOrchestrationService,
         ILoggingBroker loggingBroker)
     {
-        this.gitSigningService = gitSigningService;
+        this.gitSigningOrchestrationService = gitSigningOrchestrationService;
         this.loggingBroker = loggingBroker;
     }
 
@@ -35,16 +35,16 @@ public class GitSigningOrchestrationService : IGitSigningOrchestrationService
         switch (command)
         {
             case "check":
-                await gitSigningService.CheckGitSigningStatusAsync();
+                await gitSigningOrchestrationService.CheckGitSigningStatusAsync();
                 break;
             case "setup":
-                await gitSigningService.SetupSSHSigningAsync(userName, userEmail);
+                await gitSigningOrchestrationService.SetupSSHSigningAsync(userName, userEmail);
                 break;
             case "verify":
-                await gitSigningService.VerifySigningSetupAsync();
+                await gitSigningOrchestrationService.VerifySigningSetupAsync();
                 break;
             case "reset":
-                await gitSigningService.ResetSSHSigningAsync();
+                await gitSigningOrchestrationService.ResetSSHSigningAsync();
                 break;
             default:
 

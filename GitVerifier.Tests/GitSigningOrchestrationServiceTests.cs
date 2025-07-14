@@ -1,49 +1,49 @@
 // Copyright (c) The Standard Organization. All rights reserved.
-using GitHubCommitVerifier.Brokers.FileSystems;
 using GitHubCommitVerifier.Brokers.Loggings;
-using GitHubCommitVerifier.Brokers.Processes;
 using GitHubCommitVerifier.Services.GitSignings;
+using GitHubCommitVerifier.Services.Foundations.FileSystems;
+using GitHubCommitVerifier.Services.Foundations.Processes;
 using Moq;
 
 namespace GitVerifier.Tests;
 
-public class GitSigningServiceTests
+public class GitSigningOrchestrationServiceTests
 {
-    private readonly Mock<IProcessBroker> processBrokerMock;
-    private readonly Mock<IFileSystemBroker> fileSystemBrokerMock;
+    private readonly Mock<IProcessService> processServiceMock;
+    private readonly Mock<IFileSystemService> fileSystemServiceMock;
     private readonly Mock<ILoggingBroker> loggingBrokerMock;
-    private readonly GitSigningService service;
+    private readonly GitSigningOrchestrationService service;
 
-    public GitSigningServiceTests()
+    public GitSigningOrchestrationServiceTests()
     {
-        processBrokerMock = new Mock<IProcessBroker>();
-        fileSystemBrokerMock = new Mock<IFileSystemBroker>();
-        loggingBrokerMock = new Mock<ILoggingBroker>();
+        this.processServiceMock = new Mock<IProcessService>();
+        this.fileSystemServiceMock = new Mock<IFileSystemService>();
+        this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
-        service = new GitSigningService(
-            processBrokerMock.Object,
-            fileSystemBrokerMock.Object,
-            loggingBrokerMock.Object);
+        this.service = new GitSigningOrchestrationService(
+            this.processServiceMock.Object,
+            this.fileSystemServiceMock.Object,
+            this.loggingBrokerMock.Object);
     }
 
     [Fact]
     public async Task ShouldCheckGitSigningStatusAsync()
     {
         // given
-        processBrokerMock.Setup(broker =>
+        this.processServiceMock.Setup(broker =>
             broker.ExecuteGitCommandAsync(It.IsAny<string>()))
                 .ReturnsAsync(string.Empty);
 
         // when
-        await service.CheckGitSigningStatusAsync();
+        await this.service.CheckGitSigningStatusAsync();
 
         // then
-        processBrokerMock.Verify(broker =>
+        this.processServiceMock.Verify(broker =>
             broker.ExecuteGitCommandAsync(
                 "config --global --get commit.gpgsign"),
         Times.Once);
 
-        processBrokerMock.Verify(broker =>
+        this.processServiceMock.Verify(broker =>
             broker.ExecuteGitCommandAsync(
                 "config --global --get gpg.format"),
         Times.Once);
@@ -58,27 +58,27 @@ public class GitSigningServiceTests
             ".ssh",
             "id_ed25519");
 
-        fileSystemBrokerMock.Setup(broker =>
+        this.fileSystemServiceMock.Setup(broker =>
             broker.FileExists(It.IsAny<string>()))
                 .Returns(false);
 
-        processBrokerMock.Setup(broker =>
+        this.processServiceMock.Setup(broker =>
             broker.ExecuteCommandAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(string.Empty);
 
-        fileSystemBrokerMock.Setup(broker =>
+        this.fileSystemServiceMock.Setup(broker =>
             broker.ReadFileAsync(It.IsAny<string>()))
                 .ReturnsAsync(string.Empty);
 
-        fileSystemBrokerMock.Setup(broker =>
+        this.fileSystemServiceMock.Setup(broker =>
             broker.WriteFileAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(ValueTask.CompletedTask);
 
         // when
-        await service.SetupSSHSigningAsync("user", "email");
+        await this.service.SetupSSHSigningAsync("user", "email");
 
         // then
-        processBrokerMock.Verify(broker =>
+        this.processServiceMock.Verify(broker =>
             broker.ExecuteCommandAsync(
                 "ssh-keygen",
                 It.Is<string>(args => args.Contains(sshPath))),

@@ -1,7 +1,7 @@
 // Copyright (c) The Standard Organization. All rights reserved.
 namespace GitHubCommitVerifier.Services.GitSignings;
 
-public interface IGitSigningService
+public interface IGitSigningOrchestrationService
 {
     ValueTask CheckGitSigningStatusAsync();
     ValueTask SetupSSHSigningAsync(string userName, string userEmail);

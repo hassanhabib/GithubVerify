@@ -5,6 +5,8 @@ using GitHubCommitVerifier.Brokers.Processes;
 using GitHubCommitVerifier.Clients;
 using GitHubCommitVerifier.Services.GitSignings;
 using GitHubCommitVerifier.Services.Orchestrations.GitSignings;
+using GitHubCommitVerifier.Services.Foundations.Processes;
+using GitHubCommitVerifier.Services.Foundations.FileSystems;
 
 namespace GitHubCommitVerifier;
 
@@ -16,16 +18,24 @@ internal class Program
         var processBroker = new ProcessBroker();
         var fileSystemBroker = new FileSystemBroker();
 
-        var gitSigningService = new GitSigningService(
+        var processService = new ProcessService(
             processBroker,
+            loggingBroker);
+
+        var fileSystemService = new FileSystemService(
             fileSystemBroker,
             loggingBroker);
 
-        var orchestrationService = new GitSigningOrchestrationService(
-            gitSigningService,
+        var gitSigningOrchestrationService = new GitSigningOrchestrationService(
+            processService,
+            fileSystemService,
             loggingBroker);
 
-        var client = new GitSigningClient(orchestrationService);
+        var commandService = new GitSigningCommandService(
+            gitSigningOrchestrationService,
+            loggingBroker);
+
+        var client = new GitSigningClient(commandService);
 
         await client.ExecuteAsync(args);
     }

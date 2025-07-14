@@ -5,13 +5,13 @@ namespace GitHubCommitVerifier.Clients;
 
 public class GitSigningClient
 {
-    private readonly IGitSigningOrchestrationService orchestrationService;
+    private readonly IGitSigningCommandService commandService;
 
-    public GitSigningClient(IGitSigningOrchestrationService orchestrationService)
+    public GitSigningClient(IGitSigningCommandService commandService)
     {
-        this.orchestrationService = orchestrationService;
+        this.commandService = commandService;
     }
 
     public async ValueTask ExecuteAsync(string[] args) =>
-        await orchestrationService.ProcessCommandAsync(args);
+        await commandService.ProcessCommandAsync(args);
 }

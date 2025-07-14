@@ -57,6 +57,15 @@ namespace GitHubCommitVerifier
         private static async Task SetupSSHSigning(string userName, string userEmail)
         {
             Console.WriteLine("Setting up SSH signing...");
+
+            string targetDirectory =
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".ssh");
+
+            if (Directory.Exists(targetDirectory) is not true)
+            {
+                Directory.CreateDirectory(targetDirectory);
+            }
+
             string sshPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".ssh", "id_ed25519");
 
             if (!File.Exists(sshPath))

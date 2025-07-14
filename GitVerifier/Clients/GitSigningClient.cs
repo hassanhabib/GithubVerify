@@ -1,50 +1,17 @@
-using GitHubCommitVerifier.Services.GitSignings;
-using GitHubCommitVerifier.Brokers.Loggings;
+// Copyright (c) The Standard Organization. All rights reserved.
+using GitHubCommitVerifier.Services.Orchestrations.GitSignings;
 
 namespace GitHubCommitVerifier.Clients;
 
 public class GitSigningClient
 {
-    private readonly IGitSigningService gitSigningService;
-    private readonly ILoggingBroker loggingBroker;
+    private readonly IGitSigningOrchestrationService orchestrationService;
 
-    public GitSigningClient(IGitSigningService gitSigningService, ILoggingBroker loggingBroker)
+    public GitSigningClient(IGitSigningOrchestrationService orchestrationService)
     {
-        this.gitSigningService = gitSigningService;
-        this.loggingBroker = loggingBroker;
+        this.orchestrationService = orchestrationService;
     }
 
-    public async ValueTask<int> ExecuteAsync(string[] args)
-    {
-        if (args.Length == 0)
-        {
-            loggingBroker.Log("Usage: dotnet GithubVerify [check|setup|verify|reset] [username] [email]");
-            return 1;
-        }
-
-        string command = args[0].ToLower();
-        string userName = args.Length > 1 ? args[1] : Environment.UserName;
-        string userEmail = args.Length > 2 ? args[2] : "your_email@example.com";
-
-        switch (command)
-        {
-            case "check":
-                await gitSigningService.CheckGitSigningStatusAsync();
-                break;
-            case "setup":
-                await gitSigningService.SetupSSHSigningAsync(userName, userEmail);
-                break;
-            case "verify":
-                await gitSigningService.VerifySigningSetupAsync();
-                break;
-            case "reset":
-                await gitSigningService.ResetSSHSigningAsync();
-                break;
-            default:
-                loggingBroker.Log("Invalid command. Use 'check', 'setup', 'verify', or 'reset'.");
-                return 1;
-        }
-
-        return 0;
-    }
+    public async ValueTask ExecuteAsync(string[] args) =>
+        await orchestrationService.ProcessCommandAsync(args);
 }

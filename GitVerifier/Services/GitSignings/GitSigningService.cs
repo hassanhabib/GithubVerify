@@ -35,28 +35,39 @@ public class GitSigningService : IGitSigningService
     public async ValueTask SetupSSHSigningAsync(string userName, string userEmail)
     {
         loggingBroker.Log("Setting up SSH signing...");
-        string sshPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".ssh", "id_ed25519");
+        string sshPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            ".ssh",
+            "id_ed25519");
 
         if (!fileSystemBroker.FileExists(sshPath))
         {
             loggingBroker.Log("Generating SSH key...");
-            await processBroker.ExecuteCommandAsync("ssh-keygen", $"-t ed25519 -C \"{userEmail}\" -f \"{sshPath}\" -N \"\"");
+            await processBroker.ExecuteCommandAsync(
+                "ssh-keygen",
+                $"-t ed25519 -C \"{userEmail}\" -f \"{sshPath}\" -N \"\"");
         }
         else
         {
             loggingBroker.Log($"SSH key already exists at {sshPath}");
         }
 
-        string allowedSignersPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".gnupg", "allowed_signers");
+        string allowedSignersPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            ".gnupg",
+            "allowed_signers");
         fileSystemBroker.CreateDirectory(allowedSignersPath);
         string sshKey = await fileSystemBroker.ReadFileAsync(sshPath + ".pub");
         await fileSystemBroker.WriteFileAsync(allowedSignersPath, $"{userName} {sshKey}");
 
         loggingBroker.Log("Configuring Git...");
         await processBroker.ExecuteGitCommandAsync("config --global gpg.format ssh");
-        await processBroker.ExecuteGitCommandAsync($"config --global user.signingkey {sshPath}.pub");
-        await processBroker.ExecuteGitCommandAsync("config --global commit.gpgsign true");
-        await processBroker.ExecuteGitCommandAsync($"config --global gpg.ssh.allowedSignersFile {allowedSignersPath}");
+        await processBroker.ExecuteGitCommandAsync(
+            $"config --global user.signingkey {sshPath}.pub");
+        await processBroker.ExecuteGitCommandAsync(
+            "config --global commit.gpgsign true");
+        await processBroker.ExecuteGitCommandAsync(
+            $"config --global gpg.ssh.allowedSignersFile {allowedSignersPath}");
 
         loggingBroker.Log("✅ SSH key and Git config setup completed.");
         loggingBroker.Log("🔑 Upload your public key to GitHub: https://github.com/settings/ssh");
@@ -90,9 +101,15 @@ public class GitSigningService : IGitSigningService
     {
         loggingBroker.Log("⚠️ Resetting SSH signing configuration...");
 
-        string sshPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".ssh", "id_ed25519");
+        string sshPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            ".ssh",
+            "id_ed25519");
         string sshPubPath = sshPath + ".pub";
-        string allowedSignersPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".gnupg", "allowed_signers");
+        string allowedSignersPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            ".gnupg",
+            "allowed_signers");
 
         await processBroker.ExecuteGitCommandAsync("config --global --unset gpg.format");
         await processBroker.ExecuteGitCommandAsync("config --global --unset user.signingkey");

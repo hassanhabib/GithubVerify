@@ -16,7 +16,9 @@ public class GitSigningServiceTests
         var fileBrokerMock = new Mock<IFileSystemBroker>();
         var loggingBrokerMock = new Mock<ILoggingBroker>();
 
-        processBrokerMock.Setup(b => b.ExecuteGitCommandAsync(It.IsAny<string>())).ReturnsAsync(string.Empty);
+        processBrokerMock.Setup(broker =>
+            broker.ExecuteGitCommandAsync(It.IsAny<string>()))
+                .ReturnsAsync(string.Empty);
 
         var service = new GitSigningService(processBrokerMock.Object, fileBrokerMock.Object, loggingBrokerMock.Object);
 
@@ -24,8 +26,14 @@ public class GitSigningServiceTests
         await service.CheckGitSigningStatusAsync();
 
         // then
-        processBrokerMock.Verify(b => b.ExecuteGitCommandAsync("config --global --get commit.gpgsign"), Times.Once);
-        processBrokerMock.Verify(b => b.ExecuteGitCommandAsync("config --global --get gpg.format"), Times.Once);
+        processBrokerMock.Verify(broker =>
+            broker.ExecuteGitCommandAsync(
+                "config --global --get commit.gpgsign"),
+            Times.Once);
+        processBrokerMock.Verify(broker =>
+            broker.ExecuteGitCommandAsync(
+                "config --global --get gpg.format"),
+            Times.Once);
     }
 
     [Fact]
@@ -35,12 +43,23 @@ public class GitSigningServiceTests
         var processBrokerMock = new Mock<IProcessBroker>();
         var fileBrokerMock = new Mock<IFileSystemBroker>();
         var loggingBrokerMock = new Mock<ILoggingBroker>();
-        string sshPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".ssh", "id_ed25519");
+        string sshPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            ".ssh",
+            "id_ed25519");
 
-        fileBrokerMock.Setup(b => b.FileExists(It.IsAny<string>())).Returns(false);
-        processBrokerMock.Setup(b => b.ExecuteCommandAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(string.Empty);
-        fileBrokerMock.Setup(b => b.ReadFileAsync(It.IsAny<string>())).ReturnsAsync(string.Empty);
-        fileBrokerMock.Setup(b => b.WriteFileAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(ValueTask.CompletedTask);
+        fileBrokerMock.Setup(broker =>
+            broker.FileExists(It.IsAny<string>()))
+                .Returns(false);
+        processBrokerMock.Setup(broker =>
+            broker.ExecuteCommandAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(string.Empty);
+        fileBrokerMock.Setup(broker =>
+            broker.ReadFileAsync(It.IsAny<string>()))
+                .ReturnsAsync(string.Empty);
+        fileBrokerMock.Setup(broker =>
+            broker.WriteFileAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(ValueTask.CompletedTask);
 
         var service = new GitSigningService(processBrokerMock.Object, fileBrokerMock.Object, loggingBrokerMock.Object);
 
@@ -48,6 +67,10 @@ public class GitSigningServiceTests
         await service.SetupSSHSigningAsync("user","email");
 
         // then
-        processBrokerMock.Verify(b => b.ExecuteCommandAsync("ssh-keygen", It.Is<string>(args => args.Contains(sshPath))), Times.Once);
+        processBrokerMock.Verify(broker =>
+            broker.ExecuteCommandAsync(
+                "ssh-keygen",
+                It.Is<string>(args => args.Contains(sshPath))),
+            Times.Once);
     }
 }

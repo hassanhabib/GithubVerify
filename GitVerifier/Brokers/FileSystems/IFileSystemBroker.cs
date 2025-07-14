@@ -1,3 +1,4 @@
+// Copyright (c) The Standard Organization. All rights reserved.
 namespace GitHubCommitVerifier.Brokers.FileSystems;
 
 public interface IFileSystemBroker

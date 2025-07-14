@@ -1,3 +1,4 @@
+// Copyright (c) The Standard Organization. All rights reserved.
 using GitHubCommitVerifier.Brokers.FileSystems;
 using GitHubCommitVerifier.Brokers.Loggings;
 using GitHubCommitVerifier.Brokers.Processes;
@@ -14,13 +15,16 @@ internal class Program
         var loggingBroker = new LoggingBroker();
         var processBroker = new ProcessBroker();
         var fileSystemBroker = new FileSystemBroker();
+
         var gitSigningService = new GitSigningService(
             processBroker,
             fileSystemBroker,
             loggingBroker);
+
         var orchestrationService = new GitSigningOrchestrationService(
             gitSigningService,
             loggingBroker);
+
         var client = new GitSigningClient(orchestrationService);
 
         await client.ExecuteAsync(args);

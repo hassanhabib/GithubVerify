@@ -21,8 +21,10 @@ public class GitSigningOrchestrationService : IGitSigningOrchestrationService
     {
         if (args.Length == 0)
         {
+
             loggingBroker.Log(
                 "Usage: dotnet GithubVerify [check|setup|verify|reset] [username] [email]");
+
             return;
         }
 
@@ -45,8 +47,10 @@ public class GitSigningOrchestrationService : IGitSigningOrchestrationService
                 await gitSigningService.ResetSSHSigningAsync();
                 break;
             default:
+
                 loggingBroker.Log(
                     "Invalid command. Use 'check', 'setup', 'verify', or 'reset'.");
+
                 break;
         }
     }

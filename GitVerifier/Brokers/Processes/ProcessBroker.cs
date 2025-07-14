@@ -1,3 +1,4 @@
+// Copyright (c) The Standard Organization. All rights reserved.
 using System.Diagnostics;
 
 namespace GitHubCommitVerifier.Brokers.Processes;
@@ -7,6 +8,7 @@ public class ProcessBroker : IProcessBroker
     public async ValueTask<string> ExecuteCommandAsync(string command, string arguments)
     {
         var outputCompletion = new TaskCompletionSource<string>();
+
         var process = new Process
         {
             StartInfo = new ProcessStartInfo

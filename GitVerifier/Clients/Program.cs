@@ -4,7 +4,6 @@ using GitHubCommitVerifier.Brokers.Loggings;
 using GitHubCommitVerifier.Brokers.Processes;
 using GitHubCommitVerifier.Clients;
 using GitHubCommitVerifier.Services.GitSignings;
-using GitHubCommitVerifier.Services.Orchestrations.GitSignings;
 using GitHubCommitVerifier.Services.Foundations.Processes;
 using GitHubCommitVerifier.Services.Foundations.FileSystems;
 
@@ -31,11 +30,9 @@ internal class Program
             fileSystemService,
             loggingBroker);
 
-        var commandService = new GitSigningCommandService(
+        var client = new GitSigningClient(
             gitSigningOrchestrationService,
             loggingBroker);
-
-        var client = new GitSigningClient(commandService);
 
         await client.ExecuteAsync(args);
     }

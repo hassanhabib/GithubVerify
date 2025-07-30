@@ -1,6 +1,6 @@
 ﻿# GithubVerify
 
-A .NET CLI tool to help you configure and verify SSH-based commit signing for GitHub.  
+A tool to help you configure and verify SSH-based commit signing for GitHub.  
 Built with ❤️ by **The Standard Organization**, a coalition of the Good-Hearted Engineers.
 
 Repository: [https://github.com/hassanhabib/GithubVerify](https://github.com/hassanhabib/GithubVerify)
@@ -18,7 +18,7 @@ Repository: [https://github.com/hassanhabib/GithubVerify](https://github.com/has
 
 ## 🛠 Requirements
 
-- [.NET 6.0 SDK](https://dotnet.microsoft.com/en-us/download) or later
+- Bash
 - [Git](https://git-scm.com/downloads)
 - OpenSSH (usually pre-installed on most systems)
 - A [GitHub](https://github.com) account
@@ -32,19 +32,12 @@ Repository: [https://github.com/hassanhabib/GithubVerify](https://github.com/has
 ```bash
 git clone https://github.com/hassanhabib/GithubVerify.git
 cd GithubVerify
-dotnet build
 ```
 
 ### Run
 
 ```bash
-dotnet run --project GithubVerify.csproj [command] [username] [email]
-```
-
-Or, if compiled:
-
-```bash
-dotnet GithubVerify.dll [command] [username] [email]
+./GithubVerify.sh [command] [username] [email]
 ```
 
 ---
@@ -65,25 +58,25 @@ dotnet GithubVerify.dll [command] [username] [email]
 ### Check commit signing status
 
 ```bash
-dotnet GithubVerify.dll check
+./GithubVerify.sh check
 ```
 
 ### Setup SSH commit signing
 
 ```bash
-dotnet GithubVerify.dll setup hassan hassan@example.com
+./GithubVerify.sh setup hassan hassan@example.com
 ```
 
 ### Verify the latest commit signature
 
 ```bash
-dotnet GithubVerify.dll verify
+./GithubVerify.sh verify
 ```
 
 ### Reset all Git + SSH signing configuration
 
 ```bash
-dotnet GithubVerify.dll reset
+./GithubVerify.sh reset
 ```
 
 ---

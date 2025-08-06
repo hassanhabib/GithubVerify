@@ -31,7 +31,14 @@ reset)
   rm "$SSHKEYPATH" "$SSHKEYPATH.pub" "$ALLOWEDSIGNERSPATH"
   for o in gpg.format user.signingkey commit.gpgsign gpg.ssh.allowedSignersFile; do git config --global --unset "$o"; done
   ;;
+selftest)
+  bash $0 reset
+  [[ -f "$SSHKEYPATH" ]] && echo "❌ WARNING TEST FAILED SSH KEY NOT DELETED" && exit 1
+  ;;
+hasan_minhajs_custom_feature)
+  echo "Hello this is Hasan Minhaj's custom feature"
+  ;;
 *)
-  echo "Usage: $0 [check|setup|verify|reset] [username] [email]"
+  echo "Usage: $0 [check|setup|verify|reset|selftest] [username] [email]"
   ;;
 esac
